@@ -1,6 +1,6 @@
 // tests/test_main.cpp
 #include <gtest/gtest.h>
-#include <algorithm>   // для std::reverse — я забыл его в прошлый раз, лови
+#include <algorithm>   
 #include <string>
 
 std::string reverseString(std::string s) {
