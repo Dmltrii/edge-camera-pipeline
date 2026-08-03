@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+   branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            cxx: g++
+          - os: macos-latest
+            cxx: clang++
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake --preset debug
+        env:
+          CXX: ${{ matrix.cxx }}
+
+      - name: Build
+        run: cmake --build --preset debug
+
+      - name: Test
+        run: ctest --preset debug 
