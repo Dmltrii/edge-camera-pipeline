@@ -32,3 +32,6 @@ add_executable(unit_tests tests/test_main.cpp src/frame_stats.cpp)
 target_compile_options(unit_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(unit_tests PRIVATE GTest::gtest_main)
 target_include_directories(unit_tests PRIVATE src)   
+
+include(GoogleTest)
+gtest_discover_tests(unit_tests)  
