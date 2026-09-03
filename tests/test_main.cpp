@@ -21,10 +21,8 @@ TEST(FrameStatsTest, HandlesBasicFrame) {
   std::vector<int> frame{10, 20, 30, 40, 50};
 
   auto result = compute_stats(frame);
-
-  EXPECT_EQ(result->min, 10);
-  EXPECT_EQ(result->max, 50);
-  EXPECT_EQ(result->mean, 30.0);
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(*result, FrameStats(10, 50, 30.0));
 }
 
 TEST(FrameStatsTest, HandlesEmptyFrame) {
@@ -39,8 +37,7 @@ TEST(FrameStatsTest, HandlesOneElementFrame) {
   std::vector<int> frame{10};
 
   auto result = compute_stats(frame);
-
-  EXPECT_EQ(result->min, 10);
-  EXPECT_EQ(result->max, 10);
-  EXPECT_EQ(result->mean, 10.0);
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(*result, FrameStats(10, 10, 10.0));
 }
+
