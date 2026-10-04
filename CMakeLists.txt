@@ -28,7 +28,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
-add_executable(unit_tests tests/test_main.cpp src/frame_stats.cpp)
+add_executable(unit_tests
+    tests/test_main.cpp
+    tests/test_file_descriptor.cpp
+    src/frame_stats.cpp
+)
 target_compile_options(unit_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(unit_tests PRIVATE GTest::gtest_main)
 target_include_directories(unit_tests PRIVATE src)   
