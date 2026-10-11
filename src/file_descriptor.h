@@ -31,6 +31,8 @@ public:
             if (m_fd >= 0){ ::close(m_fd);}
             m_fd = other.m_fd;
             other.m_fd = -1;
+            m_error = other.m_error;
+            other.m_error = 0;
         }
         return *this;
     }
