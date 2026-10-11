@@ -37,6 +37,7 @@ TEST(FileDescriptorTest, MoveTransfersOwnership) // источник невал�
     EXPECT_EQ(fd.get(), -1);
     ASSERT_NE(fcntl(fd2.get(), F_GETFD), -1);
     EXPECT_EQ(fd2.get(),mem_fd);
+    EXPECT_EQ(fd.error(), 0);
 }
 
 TEST(FileDescriptorTest, ClosesOnScopeExit)     // главный: fcntl после выхода из scope
@@ -53,7 +54,6 @@ EXPECT_EQ(errno, EBADF);
 
 TEST(FileDescriptorTest, MoveAssignmentClosesOld) // старый дескриптор закрыт
 {
-
     FileDescriptor a("/dev/null", O_RDONLY);
     ASSERT_NE(fcntl(a.get(), F_GETFD), -1);
     FileDescriptor b("/dev/null", O_RDONLY);
@@ -64,9 +64,23 @@ TEST(FileDescriptorTest, MoveAssignmentClosesOld) // старый дескрип
     ASSERT_TRUE(b.valid());
     EXPECT_EQ(b.get(), fd_a);
     EXPECT_EQ(a.get(), -1);
+    EXPECT_EQ(a.error(), 0);
     ASSERT_NE(fcntl(fd_a, F_GETFD), -1);
     EXPECT_EQ(fcntl(fd_b, F_GETFD), -1);
     EXPECT_EQ(errno, EBADF);
-    
 }
 
+TEST(FileDescriptorTest, MoveAssignmentTransfersError)
+{
+    FileDescriptor good("/dev/null", O_RDONLY);
+    ASSERT_NE(fcntl(good.get(), F_GETFD), -1);
+    FileDescriptor bad("/noexist", O_RDONLY);
+    ASSERT_FALSE(bad.valid());
+    int old_fd{good.get()};
+    good = std::move(bad);
+    EXPECT_EQ(fcntl(old_fd, F_GETFD), -1);
+    EXPECT_EQ(errno, EBADF);
+    EXPECT_FALSE(good.valid());
+    EXPECT_EQ(good.error(), ENOENT);
+    EXPECT_EQ(bad.error(), 0);
+}
