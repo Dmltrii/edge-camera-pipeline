@@ -6,10 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-
-
-# Warnings как ошибки — ловим проблемы на этапе компиляции (вспомни -Wall из Дня 2)
-#add_compile_options(-Wall -Wextra -Wpedantic -Werror) убрано из-за GoogleTest бага
+option(ENABLE_SANITIZERS "Build with ASan and UBSan" OFF)
 
 # Нужно clangd'у, чтобы понимать твои инклюды в многофайловом проекте
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -36,6 +33,20 @@ add_executable(unit_tests
 target_compile_options(unit_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(unit_tests PRIVATE GTest::gtest_main)
 target_include_directories(unit_tests PRIVATE src)   
+
+
+function(enable_sanitizers target)
+  if(ENABLE_SANITIZERS)
+    target_compile_options(${target} PRIVATE
+      -fsanitize=address,undefined
+      -fno-sanitize-recover=all
+      -fno-omit-frame-pointer)
+    target_link_options(${target} PRIVATE -fsanitize=address,undefined)
+  endif()
+endfunction()
+
+enable_sanitizers(edge_camera_pipeline)
+enable_sanitizers(unit_tests)
 
 include(GoogleTest)
 gtest_discover_tests(unit_tests)  
