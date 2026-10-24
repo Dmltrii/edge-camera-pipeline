@@ -1,4 +1,13 @@
+# Сборка
 build*/
 compile_commands.json
-.vscode/test.txt
+
+# Редактор и инструменты
+.vscode/
+.cache/
+
+# macOS
+.DS_Store
+
+# Личное
 JOURNAL.md
