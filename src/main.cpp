@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include <optional>
-#include <string>
 #include <vector>
 
 #include "frame_stats.h"
@@ -14,22 +13,27 @@ int main(int argc, char* argv[]) {
   std::ifstream file(argv[1]);
 
   if (!file) {
+    std::cerr << "cannot open " << argv[1] << '\n';
     return 1;
   }
 
-  int x;
+  int x{};
   std::vector<int> frame;
   while (file >> x) {
     frame.push_back(x);
     // x — очередное число
   }
 
+  if (!file.eof()) {
+    std::cerr << "Parse error in " << argv[1] << '\n';
+    return 1;
+  }
   auto result = compute_stats(frame);
   if (result == std::nullopt) {
+    std::cerr << "Empty input\n";
     return 1;
-  } else {
-    std::cout << *result << '\n';
   }
+  std::cout << *result << '\n';
 
   return 0;
 }
